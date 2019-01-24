@@ -25,7 +25,7 @@ class UsersController extends AppController
             if ($user) {
                 $this->Auth->setUser($user);
                 $this->Flash->success(__('You have login now', ['key' => 'element']));
-                return $this->redirect(['action' => 'landing_from_login']);
+                return $this->redirect(['action' => 'landing']);
             }
             $this->Flash->error(__('Invalid username or password, try again'));
         }
@@ -45,7 +45,20 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|void
      */
-    public function index()
+    public function landing()
+    {
+        
+        $users = $this->paginate($this->Users);
+
+        $this->set(compact('users'));
+    }
+    
+    /**
+     *  method untuk landing page
+     *
+     * @return \Cake\Http\Response|void
+     */
+    public function dashboard()
     {
         $users = $this->paginate($this->Users);
 

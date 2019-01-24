@@ -68,17 +68,15 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Security');
-//        $this->loadComponent('Csrf');
+    //    $this->loadComponent('Csrf');
         $this->loadComponent('Flash');
 
         $this->loadComponent('Auth', [
             'authorize' => ['Controller'], //MEMBATASI PERGERAKAN CONTROLLER 
-//            'loginRedirect'=>['Controller'=>'access', 'action'=>'login'],
-//            'loginAction' => ['controller' => 'Pages', 'action' => 'display'],
             'authError' => 'You are not authorized',
             'loginRedirect' => [//SETELAH LOGIN DIARHKAN
                 'controller' => 'Users', //KONTROLER ARAHAN LOGIN
-                'action' => 'dashboard', //AKSI DENGAN PEMANGGILAN CONTROLLER METHOD
+                'action' => 'landing', //AKSI DENGAN PEMANGGILAN CONTROLLER METHOD
             ],
             'autoRedirect' => false,
             'logoutRedirect' => [//SETELAH LOGOUT  DIARAHKAN
@@ -97,6 +95,6 @@ class AppController extends Controller
     }
 
     public function isAuthorized($user) {
-
+        return true;
     }
 }

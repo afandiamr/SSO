@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    
     <!-- Favicon icon -->
     <link rel="icon" type="image/ico" sizes="16x16" href="../img/ict.ico">
         <title>Inovasi Cipta Teknologi Apps</title>
@@ -15,7 +16,7 @@
         '../bootstrap/dist/css/bootstrap.min.css',
         'animate.css',
         '../plugins/bower_components/toast-master/css/jquery.toast.css',
-        'style.css', 'colors/blue.css'
+        'style.css', 'colors/red.css'
     ])
     ?>
     <?= $this->fetch('css') ?>
