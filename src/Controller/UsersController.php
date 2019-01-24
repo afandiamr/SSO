@@ -12,7 +12,52 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
+    /**
+     * Method untuk login
+     */
+    public function login()
+    {
+        $this->viewBuilder()->setLayout('empty');
+//        $this->autoRender = false;
+        if ($this->request->is('post')) {
 
+            $user = $this->Auth->identify();
+            if ($user) {
+                $this->Auth->setUser($user);
+                $this->Flash->success(__('You have login now', ['key' => 'element']));
+                return $this->redirect(['action' => 'landing_from_login']);
+            }
+            $this->Flash->error(__('Invalid username or password, try again'));
+        }
+    }
+
+    /**
+     * Method untuk logout
+     */
+    public function logout()
+    {
+        $this->Flash->default(__('You have logout now'));
+        return $this->redirect($this->Auth->logout());
+    }
+
+    /**
+     *  method untuk landing page
+     *
+     * @return \Cake\Http\Response|void
+     */
+    public function index()
+    {
+        $users = $this->paginate($this->Users);
+
+        $this->set(compact('users'));
+    }
+
+    /**
+     *
+     *
+     */
+
+    //--------------------------------DEFAULT-----------------------------------------//
     /**
      * Index method
      *
@@ -35,7 +80,7 @@ class UsersController extends AppController
     public function view($id = null)
     {
         $user = $this->Users->get($id, [
-            'contain' => []
+            'contain' => [],
         ]);
 
         $this->set('user', $user);
@@ -71,7 +116,7 @@ class UsersController extends AppController
     public function edit($id = null)
     {
         $user = $this->Users->get($id, [
-            'contain' => []
+            'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());

@@ -9,6 +9,9 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
+ * @property \App\Model\Table\RolesTable|\Cake\ORM\Association\BelongsTo $Roles
+ * @property |\Cake\ORM\Association\BelongsTo $Profiles
+ *
  * @method \App\Model\Entity\User get($primaryKey, $options = [])
  * @method \App\Model\Entity\User newEntity($data = null, array $options = [])
  * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
@@ -34,8 +37,17 @@ class UsersTable extends Table
         parent::initialize($config);
 
         $this->setTable('users');
+        $this->setDisplayField('id');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Roles', [
+            'foreignKey' => 'role_id'
+        ]);
+        $this->belongsTo('Profiles', [
+            'foreignKey' => 'profile_id'
+        ]);
     }
 
     /**
@@ -53,21 +65,37 @@ class UsersTable extends Table
 
         $validator
             ->scalar('username')
-            ->requirePresence('username', 'create')
-            ->allowEmptyString('username', false);
+            ->maxLength('username', 50)
+            ->allowEmptyString('username');
 
         $validator
             ->scalar('password')
-            ->requirePresence('password', 'create')
-            ->allowEmptyString('password', false);
+            ->maxLength('password', 255)
+            ->allowEmptyString('password');
 
         $validator
-            ->scalar('user_modified')
-            ->allowEmptyString('user_modified');
+            ->scalar('pass_mobile')
+            ->maxLength('pass_mobile', 255)
+            ->allowEmptyString('pass_mobile');
 
         $validator
-            ->scalar('user_created')
-            ->allowEmptyString('user_created');
+            ->scalar('photo')
+            ->maxLength('photo', 255)
+            ->allowEmptyString('photo');
+
+        $validator
+            ->scalar('status')
+            ->maxLength('status', 2)
+            ->allowEmptyString('status');
+
+        $validator
+            ->dateTime('last_login')
+            ->allowEmptyDateTime('last_login');
+
+        $validator
+            ->scalar('photo_dir')
+            ->maxLength('photo_dir', 255)
+            ->allowEmptyString('photo_dir');
 
         return $validator;
     }
@@ -82,6 +110,8 @@ class UsersTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->isUnique(['username']));
+        $rules->add($rules->existsIn(['role_id'], 'Roles'));
+        $rules->add($rules->existsIn(['profile_id'], 'Profiles'));
 
         return $rules;
     }

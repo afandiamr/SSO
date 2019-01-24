@@ -7,12 +7,19 @@ use Cake\ORM\Entity;
  * User Entity
  *
  * @property int $id
- * @property string $username
- * @property string $password
- * @property string $created
- * @property string|null $modified
- * @property string|null $user_modified
- * @property string|null $user_created
+ * @property int|null $role_id
+ * @property string|null $username
+ * @property string|null $password
+ * @property string|null $pass_mobile
+ * @property string|null $photo
+ * @property string|null $status
+ * @property \Cake\I18n\FrozenTime|null $last_login
+ * @property \Cake\I18n\FrozenTime|null $created
+ * @property string|null $photo_dir
+ * @property \Cake\I18n\FrozenTime|null $modified
+ * @property int|null $profile_id
+ *
+ * @property \App\Model\Entity\Role $role
  */
 class User extends Entity
 {
@@ -28,12 +35,18 @@ class User extends Entity
      */
     protected $_accessible = [
         'id' => true,
+        'role_id' => true,
         'username' => true,
         'password' => true,
+        'pass_mobile' => true,
+        'photo' => true,
+        'status' => true,
+        'last_login' => true,
         'created' => true,
+        'photo_dir' => true,
         'modified' => true,
-        'user_modified' => true,
-        'user_created' => true
+        'profile_id' => true,
+        'role' => true
     ];
 
     /**

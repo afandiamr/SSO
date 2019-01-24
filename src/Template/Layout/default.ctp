@@ -31,8 +31,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <meta name="description" content="">
         <meta name="author" content="">
         <!-- Favicon icon -->
-        <link rel="icon" type="image/png" sizes="16x16" href="../plugins/images/favicon.png">
-        <title>Elite Admin Template - The Ultimate Multipurpose admin template</title>
+        <link rel="icon" type="image/ico" sizes="16x16" href="../img/ict.ico">
+        <title>Inovasi Cipta Teknologi Apps</title>
         <!--<link href="css/colors/blue.css" id="theme" rel="stylesheet">-->
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

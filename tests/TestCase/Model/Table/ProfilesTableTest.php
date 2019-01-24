@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\RolesTable;
+use App\Model\Table\ProfilesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\RolesTable Test Case
+ * App\Model\Table\ProfilesTable Test Case
  */
-class RolesTableTest extends TestCase
+class ProfilesTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\RolesTable
+     * @var \App\Model\Table\ProfilesTable
      */
-    public $Roles;
+    public $Profiles;
 
     /**
      * Fixtures
@@ -24,7 +24,7 @@ class RolesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Roles',
+        'app.Profiles',
         'app.Users'
     ];
 
@@ -36,8 +36,8 @@ class RolesTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::getTableLocator()->exists('Roles') ? [] : ['className' => RolesTable::class];
-        $this->Roles = TableRegistry::getTableLocator()->get('Roles', $config);
+        $config = TableRegistry::getTableLocator()->exists('Profiles') ? [] : ['className' => ProfilesTable::class];
+        $this->Profiles = TableRegistry::getTableLocator()->get('Profiles', $config);
     }
 
     /**
@@ -47,7 +47,7 @@ class RolesTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Roles);
+        unset($this->Profiles);
 
         parent::tearDown();
     }
@@ -68,6 +68,16 @@ class RolesTableTest extends TestCase
      * @return void
      */
     public function testValidationDefault()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test buildRules method
+     *
+     * @return void
+     */
+    public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

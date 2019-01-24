@@ -9,6 +9,9 @@ use Cake\Validation\Validator;
 /**
  * Roles Model
  *
+ * @property |\Cake\ORM\Association\HasMany $Authorizeds
+ * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\HasMany $Users
+ *
  * @method \App\Model\Entity\Role get($primaryKey, $options = [])
  * @method \App\Model\Entity\Role newEntity($data = null, array $options = [])
  * @method \App\Model\Entity\Role[] newEntities(array $data, array $options = [])
@@ -38,6 +41,13 @@ class RolesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Authorizeds', [
+            'foreignKey' => 'role_id'
+        ]);
+        $this->hasMany('Users', [
+            'foreignKey' => 'role_id'
+        ]);
     }
 
     /**
@@ -53,20 +63,19 @@ class RolesTable extends Table
             ->allowEmptyString('id', 'create');
 
         $validator
-            ->scalar('group')
-            ->allowEmptyString('group');
+            ->scalar('role_name')
+            ->maxLength('role_name', 50)
+            ->allowEmptyString('role_name');
 
         $validator
-            ->scalar('keterangan')
-            ->allowEmptyString('keterangan');
+            ->scalar('comment')
+            ->maxLength('comment', 255)
+            ->allowEmptyString('comment');
 
         $validator
-            ->scalar('user_modified')
-            ->allowEmptyString('user_modified');
-
-        $validator
-            ->scalar('user_created')
-            ->allowEmptyString('user_created');
+            ->scalar('status')
+            ->maxLength('status', 2)
+            ->allowEmptyString('status');
 
         return $validator;
     }

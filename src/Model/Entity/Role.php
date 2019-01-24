@@ -7,12 +7,13 @@ use Cake\ORM\Entity;
  * Role Entity
  *
  * @property int $id
- * @property string|null $group
- * @property string|null $keterangan
- * @property string|null $created
- * @property string|null $modified
- * @property string|null $user_modified
- * @property string|null $user_created
+ * @property string|null $role_name
+ * @property string|null $comment
+ * @property \Cake\I18n\FrozenTime|null $created
+ * @property \Cake\I18n\FrozenTime|null $modified
+ * @property string|null $status
+ *
+ * @property \App\Model\Entity\User[] $users
  */
 class Role extends Entity
 {
@@ -27,11 +28,11 @@ class Role extends Entity
      * @var array
      */
     protected $_accessible = [
-        'group' => true,
-        'keterangan' => true,
+        'role_name' => true,
+        'comment' => true,
         'created' => true,
         'modified' => true,
-        'user_modified' => true,
-        'user_created' => true
+        'status' => true,
+        'users' => true
     ];
 }

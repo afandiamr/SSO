@@ -7,11 +7,11 @@ if (!isset($params['escape']) || $params['escape'] !== false) {
     $(function () {
         // Display a success toast, with a title
         $.toast({
-            heading: 'Error Message',
+            heading: 'Greeting',
             text: '<?= json_encode($message)?>',
             position: 'top-right',
             loaderBg:'#ff6849',
-            icon: 'error',
+            icon: 'info',
             hideAfter: 3000, 
             stack: 6
           });
