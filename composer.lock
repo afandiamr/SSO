@@ -4,8 +4,42 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f32863927c5c49c33745e8bbef23cedc",
+    "content-hash": "603d7704c5f91269a6f1df5f968bcfc6",
     "packages": [
+        {
+            "name": "allanmcarvalho/cakephp-datatables",
+            "version": "1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/allanmcarvalho/cakephp-datatables.git",
+                "reference": "968eb3bdbdf002128ec520a9614b7440375dc686"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/allanmcarvalho/cakephp-datatables/zipball/968eb3bdbdf002128ec520a9614b7440375dc686",
+                "reference": "968eb3bdbdf002128ec520a9614b7440375dc686",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": ">=3.7.0 <4.0.0",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "DataTables\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "DataTables plugin for CakePHP 3.x",
+            "time": "2018-12-19T21:35:35+00:00"
+        },
         {
             "name": "aura/intl",
             "version": "3.0.0",

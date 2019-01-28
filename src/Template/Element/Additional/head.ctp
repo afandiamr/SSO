@@ -20,8 +20,8 @@
     ])
     ?>
     <?= $this->fetch('css') ?>
-    <?=
-    $this->Html->script([
+    <?php 
+    echo $this->Html->script([
         '../plugins/bower_components/jquery/dist/jquery.min.js',
         '../bootstrap/dist/js/tether.min.js',
         '../bootstrap/dist/js/bootstrap.min.js',

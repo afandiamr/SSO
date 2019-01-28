@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use DataTables\Controller\DataTablesAjaxRequestTrait;
 /**
  * Users Controller
  *
@@ -12,6 +12,22 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
+
+    use DataTablesAjaxRequestTrait;
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('DataTables.DataTables');
+        $this->DataTables->createConfig('Users')
+                ->table('Users')
+                ->databaseColumn('username')
+                ->column('No', ['label'=>'No.','database' => false,'searchable'=>false])
+                ->column('username', ['label' => 'Username'])
+                ->column('last_login', ['label' => 'Riwayat Login','searchable'=>false])
+                ->column('Aksi', ['label' => 'Aksi','database'=> false,'searchable'=>false]);
+    }
+
+
     /**
      * Method untuk login
      */
@@ -47,12 +63,11 @@ class UsersController extends AppController
      */
     public function landing()
     {
-        
+        $this->viewBuilder()->setLayout('empty');
         $users = $this->paginate($this->Users);
-
         $this->set(compact('users'));
     }
-    
+
     /**
      *  method untuk landing page
      *
@@ -78,9 +93,7 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
-
-        $this->set(compact('users'));
+        $this->DataTables->setViewVars(['Users']);
     }
 
     /**

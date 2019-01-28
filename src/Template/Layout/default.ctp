@@ -40,38 +40,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
         <?=
-        $this->Html->css([
-            '../bootstrap/dist/css/bootstrap.min.css',
-            '../plugins/bower_components/bootstrap-extension/css/bootstrap-extension.css',
-            '../plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css',
-            '../plugins/bower_components/bootstrap-select/bootstrap-select.min.css',
-            'style.css', 'colors/blue.css', 'animate.css',
-            '../plugins/bower_components/toast-master/css/jquery.toast.css',
-        ])
-        ?>
-        <?= $this->fetch('css') ?>
+$this->Html->css([
+    '../bootstrap/dist/css/bootstrap.min.css',
+    '../plugins/bower_components/bootstrap-extension/css/bootstrap-extension.css',
+    '../plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css',
+    '../plugins/bower_components/bootstrap-select/bootstrap-select.min.css',
+    'style.css', 'colors/blue.css', 'animate.css',
+    '../plugins/bower_components/toast-master/css/jquery.toast.css',
+])
+?>
+        <?=$this->fetch('css')?>
         <?=
-        $this->Html->script([
-            '../plugins/bower_components/jquery/dist/jquery.min.js',
-            'lib/websocket.js',
-            '../bootstrap/dist/js/tether.min.js',
-            '../bootstrap/dist/js/bootstrap.min.js',
-            '../plugins/bower_components/bootstrap-extension/js/bootstrap-extension.min.js',
-            '../plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js',
-            '../plugins/bower_components/footable/js/footable.all.min.js',
-            '../plugins/bower_components/styleswitcher/jQuery.style.switcher.js',
-            'jquery.slimscroll.js',
-            'waves.js',
-            'jsrsasign-latest-all-min.js',
-            'custom.min.js',
-            '../plugins/bower_components/toast-master/js/jquery.toast.js',
-            'toastr.js',
-            'footable-init.js',
-        ])
-        ?>
-        <?= $this->fetch('meta') ?>
-        <?= $this->fetch('script') ?>
+$this->Html->script([
+    '../plugins/bower_components/jquery/dist/jquery.min.js',
+    '../bootstrap/dist/js/tether.min.js',
+    '../bootstrap/dist/js/bootstrap.min.js',
+    '../plugins/bower_components/bootstrap-extension/js/bootstrap-extension.min.js',
+    '../plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js',
+    '../plugins/bower_components/footable/js/footable.all.min.js',
+    '../plugins/bower_components/styleswitcher/jQuery.style.switcher.js',
+    'jquery.slimscroll.js',
+    'waves.js',
+    'jsrsasign-latest-all-min.js',
+    'custom.min.js',
+    '../plugins/bower_components/toast-master/js/jquery.toast.js',
+    'toastr.js',
+    'footable-init.js',
+    '../plugins/bower_components/datatables/jquery.dataTables.min.js',
+])
+?>
+        <?=$this->fetch('meta')?>
+        <?=$this->fetch('script')?>
     </head>
 
     <body>
@@ -194,7 +201,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </li>
                         <!-- /.dropdown -->
                         <li class="dropdown">
-                            <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="<?= '..' . str_replace("/", "\\", ltrim($current_user['photo_dir'] . $current_user['photo'], 'webroot')); ?>" alt="user-img" width="36" class="img-circle"><b class="hidden-xs"><?= $current_user['profile']['nick_name'] ?></b> </a>
+                            <?php if (!empty($current_user['photo'])): ?>
+                                <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="<?='..' . str_replace("/", "\\", ltrim($current_user['photo_dir'] . $current_user['photo'], 'webroot'));?>" alt="user-img" width="36" class="img-circle"><b class="hidden-xs"><?=$current_user['profile']['nick_name']?></b> </a>
+                            <?php else: ?>
+                                <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="../plugins/images/user-profile.jpg" alt="user-img" width="36" class="img-circle"><b class="hidden-xs"><?=$current_user['profile']['nick_name']?></b> </a>
+                            <?php endif;?>
                             <ul class="dropdown-menu dropdown-user animated flipInY">
                                 <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
                                 <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
@@ -202,7 +213,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+                                <li><a href="<?= "logout" ?>"><i class="fa fa-power-off"></i> Logout</a></li>
                             </ul>
                             <!-- /.dropdown-user -->
                         </li>
@@ -228,59 +239,64 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- /input-group -->
                         </li>
                         <li class="user-pro">
-                            <a href="#" class="waves-effect"><img src="<?= '..' . str_replace("/", "\\", ltrim($current_user['photo_dir'] . $current_user['photo'], 'webroot')); ?>" alt="user-img" class="img-circle"> <span class="hide-menu"> <?= $current_user['profile']['full_name'] ?><span class="fa arrow"></span></span>
+                            <?php if (!empty($current_user['photo'])): ?>
+                                <a href="#" class="waves-effect"><img src="<?='..' . str_replace("/", "\\", ltrim($current_user['photo_dir'] . $current_user['photo'], 'webroot'));?>" alt="user-img" class="img-circle">
+                            <?php else: ?>
+                                <a href="#" class="waves-effect"><img src="../plugins/images/user-profile.jpg" alt="user-img" class="img-circle">
+                            <?php endif;?>
+                                <span class="hide-menu"><?=$current_user['profile']['full_name']?><span class="fa arrow"></span></span>
                             </a>
+
                             <ul class="nav nav-second-level">
                                 <li><a href="javascript:void(0)"><i class="ti-user"></i> My Profile</a></li>
 <!--                                <li><a href="javascript:void(0)"><i class="ti-wallet"></i> My Balance</a></li>
                                 <li><a href="javascript:void(0)"><i class="ti-email"></i> Inbox</a></li>-->
-                                <li><a href="<?= $this->request->getAttribute("webroot") . 'users/akun' ?>"><i class="ti-settings"></i> Account Setting</a></li>
-                                <li><a href="<?= $this->request->getAttribute("webroot") . 'users/logout' ?>"><i class="fa fa-power-off"></i> Logout</a></li>
+                                <li><a href="<?=$this->request->getAttribute("webroot") . 'users/akun'?>"><i class="ti-settings"></i> Account Setting</a></li>
+                                <li><a href="<?=$this->request->getAttribute("webroot") . 'users/logout'?>"><i class="fa fa-power-off"></i> Logout</a></li>
                             </ul>
                         </li>
-                        <!--<li class="nav-small-cap m-t-10">--- Main Menu</li>-->
                         <?php
-                        foreach ($menu as $authorized) {
-                            if ($authorized->lead == '0') {
-//                                                    debug($parent_id);die();
-                                $activeHead = (($parent_id[0]['alias'] == $authorized->alias) && ($parent_id[0]['controller_name'] == $authorized->controller_name) ) ? 'active' : '';
-                                echo '<li class="' . $activeHead . '" >';
-                                echo '<a class=" waves-effect ' . $activeHead . '" href="javascript:void(0);"  > <i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '<span class="fa arrow"></span></span></a>';
-                                echo '<ul class="nav nav-second-level">';
-                                if ($authorized->has('children')) {
-                                    $param = '';
-                                    foreach ($authorized->children as $child) {
-                                        $path = $child->alias;
-                                        //                            debug($child);die();
-                                        $active = ($child_id[0]['alias'] == $path && $child_id[0]['controller_name'] == $child->controller_name ) ? 'active' : '';
-                                        $pathchild = $child->controller_name . "/" . $child->method_name;
-                                        if (!empty($child->parameter)) {
-                                            $var_array = array("virtualParam" => $child->parameter);
-                                            extract($var_array, EXTR_PREFIX_SAME, "wddx");
-                                            $param = "/" . "${virtualParam}";
-                                        }
-                                        echo '<li><a  class="' . $active . '" href=' . $this->request->getAttribute("webroot") . $pathchild . $param . '> ' . $child->alias . '</a></li>';
-                                    }
-                                }
-                                echo '</ul>';
-                                echo '</li>';
-                            } else {
-                                $pathParrent = $authorized->controller_name . "/" . $authorized->method_name;
-                                $paramParent = '';
-                                $activeHead = (($parent_id[0]['alias'] == $authorized->alias) ) ? 'active' : '';
-                                //                    debug($controller);die();
-                                if (!empty($authorized->parameter)) {
+foreach ($menu as $authorized) {
+    if ($authorized->lead == '0') {
+        $activeHead = (($parent_id[0]['alias'] == $authorized->alias) && ($parent_id[0]['controller_name'] == $authorized->controller_name)) ? 'active' : '';
+        echo '<li class="' . $activeHead . '" >';
+        echo '<a class=" waves-effect ' . $activeHead . '" href="javascript:void(0);"  > <i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '<span class="fa arrow"></span></span></a>';
+        echo '<ul class="nav nav-second-level">';
+        if ($authorized->has('children')) {
+            $param = '';
+            foreach ($authorized->children as $child) {
+                $path = $child->alias;
+                //                            debug($child);die();
+                $active = ($child_id[0]['alias'] == $path && $child_id[0]['controller_name'] == $child->controller_name) ? 'active' : '';
+                $pathchild = $child->controller_name . "/" . $child->method_name;
+                if (!empty($child->parameter)) {
+                    $var_array = array("virtualParam" => $child->parameter);
+                    extract($var_array, EXTR_PREFIX_SAME, "wddx");
+                    $param = "/" . "${virtualParam}";
+                }
+                echo '<li><a  class="' . $active . '" href=' . $this->request->getAttribute("webroot") . $pathchild . $param . '> ' . $child->alias . '</a></li>';
+            }
+        }
+        echo '</ul>';
+        echo '</li>';
+    } else {
+        $pathParrent = $authorized->controller_name . "/" . $authorized->method_name;
+        $paramParent = '';
+        // debug($parent_id);die();
+        $activeHead = (($parent_id[0]['alias'] == $authorized->alias)) ? 'active' : '';
+        //                    debug($controller);die();
+        if (!empty($authorized->parameter)) {
 
-                                    $var_array = array("color" => "blue");
-                                    extract($var_array, EXTR_PREFIX_SAME, "wddx");
-                                    $paramParent = "/" . "$color";
-                                }
-                                echo '<li >';
-                                echo '<a class= waves-effect' . $activeHead . ' href="' . $this->request->getAttribute("webroot") . $pathParrent . $paramParent . '"><i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '</span></a>';
-                                echo '</li>';
-                            }
-                        }
-                        ?>
+            $var_array = array("color" => "blue");
+            extract($var_array, EXTR_PREFIX_SAME, "wddx");
+            $paramParent = "/" . "$color";
+        }
+        echo '<li >';
+        echo '<a class= waves-effect' . $activeHead . ' href="' . $this->request->getAttribute("webroot") . $pathParrent . $paramParent . '"><i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '</span></a>';
+        echo '</li>';
+    }
+}
+?>
                         <li class="nav-small-cap">--- Support</li>
                         <li><a href="" class=""><i class="fa fa-circle-o text-danger"></i> <span class="hide-menu">Documentation</span></a></li>
                         <li><a href="" class=""><i class="fa fa-circle-o text-info"></i> <span class="hide-menu">Report Bugs</span></a></li>
@@ -295,31 +311,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="container-fluid">
                     <div class="row bg-title">
                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                            <h4 class="page-title"><?= $child_id[0]['alias'] ?></h4> </div>
+                            <h4 class="page-title"><?=$child_id[0]['alias']?></h4> </div>
                         <?php
-                        $this->Breadcrumbs->setTemplates([
-                            'wrapper' => '{{content}}',
-                            'separator' => '<li><span{{innerAttrs}}></span></li>'
-                        ]);
-                        ?>
+$this->Breadcrumbs->setTemplates([
+    'wrapper' => '{{content}}',
+    'separator' => '<li><span{{innerAttrs}}></span></li>',
+]);
+?>
                         <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                             <ol class="breadcrumb">
-                                <li><a href="<?= $this->request->getAttribute("webroot") . $menu[0]['controller_name'] . "/" . $menu[0]['method_name'] ?>">Home</a></li>
+                                <li><a href="<?=$this->request->getAttribute("webroot") . $menu[0]['controller_name'] . "/" . $menu[0]['method_name']?>">Home</a></li>
                                 <?php
-                                if ($child_id[0]['parent_id'] == 0) {
-                                    if ($child_id[0]['alias'] != "Beranda") {
-                                        $this->Breadcrumbs->add([
-                                            ['title' => ucwords($parent_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => 'index']]
-                                        ]);
-                                    }
-                                } else {
-                                    $this->Breadcrumbs->add([
-                                        ['title' => ucwords($parent_id[0]['alias'])],
-                                        ['title' => ucwords($child_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => $action]]
-                                    ]);
-                                }
-                                echo $this->Breadcrumbs->render();
-                                ?>
+if ($child_id[0]['parent_id'] == 0) {
+    if ($child_id[0]['alias'] != "Beranda") {
+        $this->Breadcrumbs->add([
+            ['title' => ucwords($parent_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => 'index']],
+        ]);
+    }
+} else {
+    $this->Breadcrumbs->add([
+        ['title' => ucwords($parent_id[0]['alias'])],
+        ['title' => ucwords($child_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => $action]],
+    ]);
+}
+echo $this->Breadcrumbs->render();
+?>
                             </ol>
                         </div>
                         <!-- /.col-lg-12 -->
@@ -403,6 +419,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>
             </div>
         </div>
+        <?=$this->DataTables->setJs()?>
         <!-- /#wrapper -->
     </body>
 
