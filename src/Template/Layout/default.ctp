@@ -40,13 +40,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
         <?=
 $this->Html->css([
     '../bootstrap/dist/css/bootstrap.min.css',
@@ -213,7 +206,7 @@ $this->Html->script([
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="<?= "logout" ?>"><i class="fa fa-power-off"></i> Logout</a></li>
+                                <li><a href="<?="logout"?>"><i class="fa fa-power-off"></i> Logout</a></li>
                             </ul>
                             <!-- /.dropdown-user -->
                         </li>
@@ -256,43 +249,28 @@ $this->Html->script([
                             </ul>
                         </li>
                         <?php
-foreach ($menu as $authorized) {
-    if ($authorized->lead == '0') {
-        $activeHead = (($parent_id[0]['alias'] == $authorized->alias) && ($parent_id[0]['controller_name'] == $authorized->controller_name)) ? 'active' : '';
-        echo '<li class="' . $activeHead . '" >';
-        echo '<a class=" waves-effect ' . $activeHead . '" href="javascript:void(0);"  > <i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '<span class="fa arrow"></span></span></a>';
+
+foreach ($menus as $authorized) {
+    if ($authorized['lead'] == '0') {
+        echo '<li class="' . ' . ' . $authorized['active'] . ' .' . '" >';
+        echo '<a class=" waves-effect ' . ' . ' . $authorized['active'] . ' .' . '" href="javascript:void(0);"  > <i class="linea-icon linea-basic" data-icon="' . $authorized['icon'] . '"></i><span class="hide-menu"> ' . $authorized['alias'] . '<span class="fa arrow"></span></span></a>';
         echo '<ul class="nav nav-second-level">';
-        if ($authorized->has('children')) {
+        if (!empty($authorized['childs'])) {
             $param = '';
-            foreach ($authorized->children as $child) {
-                $path = $child->alias;
+            foreach ($authorized['childs'] as $child) {
+                $path = $child['alias'];
                 //                            debug($child);die();
-                $active = ($child_id[0]['alias'] == $path && $child_id[0]['controller_name'] == $child->controller_name) ? 'active' : '';
-                $pathchild = $child->controller_name . "/" . $child->method_name;
-                if (!empty($child->parameter)) {
-                    $var_array = array("virtualParam" => $child->parameter);
-                    extract($var_array, EXTR_PREFIX_SAME, "wddx");
-                    $param = "/" . "${virtualParam}";
-                }
-                echo '<li><a  class="' . $active . '" href=' . $this->request->getAttribute("webroot") . $pathchild . $param . '> ' . $child->alias . '</a></li>';
+                $pathchild = $child['controller'] . "/" . $child['method'];
+                echo '<li><a  class="' . $child['active'] . '" href=' . $this->request->getAttribute("webroot") . $pathchild . $param . '> ' . $child['alias'] . '</a></li>';
             }
         }
         echo '</ul>';
         echo '</li>';
     } else {
-        $pathParrent = $authorized->controller_name . "/" . $authorized->method_name;
+        $pathParrent = $authorized['controller'] . "/" . $authorized['method'];
         $paramParent = '';
-        // debug($parent_id);die();
-        $activeHead = (($parent_id[0]['alias'] == $authorized->alias)) ? 'active' : '';
-        //                    debug($controller);die();
-        if (!empty($authorized->parameter)) {
-
-            $var_array = array("color" => "blue");
-            extract($var_array, EXTR_PREFIX_SAME, "wddx");
-            $paramParent = "/" . "$color";
-        }
         echo '<li >';
-        echo '<a class= waves-effect' . $activeHead . ' href="' . $this->request->getAttribute("webroot") . $pathParrent . $paramParent . '"><i class="linea-icon linea-basic" data-icon="' . $authorized->icon . '"></i><span class="hide-menu"> ' . $authorized->alias . '</span></a>';
+        echo '<a class= "waves-effect ' . ' . ' . $authorized['active'] . ' .' . '" href="' . $this->request->getAttribute("webroot") . $pathParrent . $paramParent . '"><i class="linea-icon linea-basic" data-icon="' . $authorized['icon'] . '"></i><span class="hide-menu"> ' . $authorized['alias'] . '</span></a>';
         echo '</li>';
     }
 }
@@ -311,7 +289,7 @@ foreach ($menu as $authorized) {
                 <div class="container-fluid">
                     <div class="row bg-title">
                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                            <h4 class="page-title"><?=$child_id[0]['alias']?></h4> </div>
+                            <h4 class="page-title"><?=$menus[$breadcrumb['parent']]['alias']?></h4> </div>
                         <?php
 $this->Breadcrumbs->setTemplates([
     'wrapper' => '{{content}}',
@@ -320,18 +298,16 @@ $this->Breadcrumbs->setTemplates([
 ?>
                         <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                             <ol class="breadcrumb">
-                                <li><a href="<?=$this->request->getAttribute("webroot") . $menu[0]['controller_name'] . "/" . $menu[0]['method_name']?>">Home</a></li>
+                                <li><a href="<?=$this->request->getAttribute("webroot") . $menus[0]['controller'] . "/" . $menus[0]['method']?>">Home</a></li>
                                 <?php
-if ($child_id[0]['parent_id'] == 0) {
-    if ($child_id[0]['alias'] != "Beranda") {
-        $this->Breadcrumbs->add([
-            ['title' => ucwords($parent_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => 'index']],
-        ]);
-    }
+if ($menus[$breadcrumb['parent']]['alias'] != "Beranda") {
+    $this->Breadcrumbs->add([
+        ['title' => ucwords($menus[$breadcrumb['parent']]['alias']), 'url' => ['controller' => $menus[$breadcrumb['parent']]['controller'], 'action' => $menus[$breadcrumb['parent']]['method']]],
+    ]);
 } else {
     $this->Breadcrumbs->add([
-        ['title' => ucwords($parent_id[0]['alias'])],
-        ['title' => ucwords($child_id[0]['alias']), 'url' => ['controller' => $controller, 'action' => $action]],
+        ['title' => ucwords($menus[$breadcrumb['parent']]['alias'])],
+        ['title' => ucwords($menus[$breadcrumb['child']]['alias']), 'url' => ['controller' => $menus[$breadcrumb['parent']]['controller'], 'action' => $menus[$breadcrumb['parent']]['method']]],
     ]);
 }
 echo $this->Breadcrumbs->render();
@@ -344,79 +320,6 @@ echo $this->Breadcrumbs->render();
                 </div>
                 <!-- /.container-fluid -->
                 <footer class="footer text-center"> 2017 &copy; Elite Admin brought to you by themedesigner.in </footer>
-            </div>
-            <!-- /#page-wrapper -->
-            <div class="right-sidebar">
-                <div class="slimscrollright">
-                    <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
-                    <div class="r-panel-body">
-                        <ul>
-                            <li><b>Layout Options</b></li>
-                            <li>
-                                <div class="checkbox checkbox-info">
-                                    <input id="checkbox1" type="checkbox" class="fxhdr">
-                                    <label for="checkbox1"> Fix Header </label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="checkbox checkbox-warning">
-                                    <input id="checkbox2" type="checkbox" class="fxsdr">
-                                    <label for="checkbox2"> Fix Sidebar </label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="checkbox checkbox-success">
-                                    <input id="checkbox4" type="checkbox" class="open-close">
-                                    <label for="checkbox4"> Toggle Sidebar </label>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul id="themecolors" class="m-t-20">
-                            <li><b>With Light sidebar</b></li>
-                            <li><a href="javascript:void(0)" theme="default" class="default-theme">1</a></li>
-                            <li><a href="javascript:void(0)" theme="green" class="green-theme">2</a></li>
-                            <li><a href="javascript:void(0)" theme="gray" class="yellow-theme">3</a></li>
-                            <li><a href="javascript:void(0)" theme="blue" class="blue-theme working">4</a></li>
-                            <li><a href="javascript:void(0)" theme="purple" class="purple-theme">5</a></li>
-                            <li><a href="javascript:void(0)" theme="megna" class="megna-theme">6</a></li>
-                            <li><b>With Dark sidebar</b></li>
-                            <br/>
-                            <li><a href="javascript:void(0)" theme="default-dark" class="default-dark-theme">7</a></li>
-                            <li><a href="javascript:void(0)" theme="green-dark" class="green-dark-theme">8</a></li>
-                            <li><a href="javascript:void(0)" theme="gray-dark" class="yellow-dark-theme">9</a></li>
-                            <li><a href="javascript:void(0)" theme="blue-dark" class="blue-dark-theme">10</a></li>
-                            <li><a href="javascript:void(0)" theme="purple-dark" class="purple-dark-theme">11</a></li>
-                            <li><a href="javascript:void(0)" theme="megna-dark" class="megna-dark-theme">12</a></li>
-                        </ul>
-                        <ul class="m-t-20 chatonline">
-                            <li><b>Chat option</b></li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/varun.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/genu.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/ritesh.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/arijit.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/govinda.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/hritik.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/john.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../plugins/images/users/pawandeep.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
         <?=$this->DataTables->setJs()?>

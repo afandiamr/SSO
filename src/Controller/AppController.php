@@ -17,6 +17,8 @@ namespace App\Controller;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
+use Cake\Datasource\ConnectionManager;
+
 
 /**
  * Application Controller
@@ -33,7 +35,7 @@ class AppController extends Controller
 
     public function beforeFilter(Event $event)
     {
-        $this->Auth->allow(['login', 'logout', 'reset', 'tes', 'forget']);
+        $this->Auth->allow(['login', 'logout', 'forget']);
         //MENGATUR AGAR TETAP LOGIN SEKALI
         if (in_array($this->request->getParam('action'), ['forget', 'login']) && !empty($this->Auth->user('id'))) {
             $this->Flash->error(__('You have already logged in'));
@@ -42,47 +44,44 @@ class AppController extends Controller
 
         $controllerName = $this->request->getParam('controller');
         $methodName = $this->request->getParam('action');
-        $this->set('controller', $controllerName);
-        $this->set('method', $methodName);
-        $this->set('urlData', 2);
-
-        self::$userId = $this->Auth->User('id');
-        $roleId = $this->Auth->User('role_id');
-        $this->loadModel('Authorizeds');
-        $child_id = $this->Authorizeds
-            ->find('threaded')
-            ->where(['status' => 1, 'role_id' => $roleId, 'controller_name' => $controllerName, 'method_name' => $methodName])
-            ->order(['lft' => 'ASC']);
-        
-        debug($child_id->toArray());die();
-
-        // debug($child_id);die();
-        $parentID[] = isset($child_id[0]['parent_id']) ? $child_id[0]['parent_id'] : null;
-        // debug($parentID);die();
-        if ($parentID[0] == '0') {
-            $parent_id[0]['alias'] = $child_id[0]['alias'];
-        } else {
-            $parent_id = $this->Authorizeds
-                ->find('threaded')
-                ->where(['status' => 1, 'id' => $parentID[0]])
-                ->order(['lft' => 'ASC'])
-                ->toArray();
-        }
-        $this->set(compact('parent_id', 'child_id'));
-        $menu = $this->Authorizeds
-            ->find('threaded')
-//                ->select(['parent_id','id','status','role_id','controller_name','method_name','alias','icon',''])
-            ->where(['status' => '1', 'role_id' => $roleId])
-            ->order(['lft' => 'ASC'])
-            ->toArray();
-        $this->set(compact('menu', 'child_id'));
+        // debug($this->Auth->User('id'));die();
         $current_user = null;
         if (!empty($this->Auth->User('id'))) {
+            self::$userId = $this->Auth->User('id');
+            $roleId = $this->Auth->User('role_id');
+            $connection = ConnectionManager::get('default');
+            $parents = $connection->execute('SELECT * FROM get_menu_parents('.$roleId.')')->fetchAll('assoc');
+            $validateURL =  $connection->execute('Select * FROM validate_url(\''.$controllerName.'\',\''.$methodName.'\','.$roleId.')')->fetchAll('assoc');
+            if (!empty($validateURL)){$validateURLChild =  $connection->execute('Select * FROM validate_url_child('.$validateURL[0]['id'].')')->fetchAll('assoc');}
+            $index = 0;
+            if(!empty($parents)&&!empty($validateURL)&&!empty($validateURLChild)){
+                foreach ($parents as  $parent){
+                    $menus[$index] = $parent;
+                    $menus[$index]['active'] = '';
+                    $childs = $connection->execute('SELECT * FROM get_menu_childs('.$parent['id'].')')->fetchAll('assoc');
+                    if(!empty($childs)){
+                        $indexchild=0;
+                        foreach ($childs as  $child){
+                            $menus[$index]['childs'][$indexchild] = $child;
+                            $menus[$index]['active'] = $menus[$index]['childs'][$indexchild]['active'] = (($validateURL[0]['alias'] == $child['alias']) && ($validateURL[0]['controller'] == $child['controller'])) ? 'active' : '';
+                            if ($menus[$index]['active'] == 'active'){
+                                $breadcrumb=[
+                                    'parent' => $index,
+                                    'child' => $indexchild
+                                ];
+                            }
+                            $indexchild++;
+                        }
+                    }
+                    $index++;
+                }
+            }
             $current_user = TableRegistry::get('Users')->get($this->Auth->User('id'), [
                 'fields' => ['id', 'photo', 'photo_dir', 'role_id', 'username', 'last_login', 'Profiles.full_name', 'Profiles.nick_name', 'Profiles.polres', 'Profiles.jabatan', 'Roles.role_name'],
                 'contain' => ['Profiles', 'Roles'],
             ]);
         }
+        $this->set(compact(['menus','validateURL','breadcrumb']));
         self::$polresID = $current_user[0]['Profile']['polres'];
         $this->set(compact(['location', 'current_user']));
 
